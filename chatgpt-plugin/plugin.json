@@ -1,13 +1,32 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "dealhound",
-  "version": "0.2.0",
-  "description": "Save shopping interests and search current deal listings on demand.",
-  "extensions": {"com.openai": {"interface": {
-    "displayName": "DealHound",
-    "shortDescription": "Search deals for your saved shopping interests",
-    "longDescription": "An on-demand deal discovery beta. No background monitoring or purchases.",
-    "developerName": "DealHound",
-    "category": "Shopping"
-  }}}
+  "version": "1.0.0",
+  "description": "Account-free physical product deal search in your agent. Explicit interests and price filters; no purchases or automatic alerts.",
+  "author": {
+    "name": "DealHound",
+    "url": "https://github.com/xmevans10/dealhound"
+  },
+  "repository": "https://github.com/xmevans10/dealhound",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "DealHound",
+        "shortDescription": "Find deals in your agent",
+        "longDescription": "Tell your agent what you want or confirm interests suggested from context you have shared. DealHound searches configured RSS listings using interests and filters supplied with each request. No DealHound account or saved shopping profile. Verify source-reported prices and availability with retailers. Searches are on demand; no background alerts or purchases.",
+        "developerName": "DealHound",
+        "category": "Shopping",
+        "capabilities": [
+          "Read"
+        ],
+        "logo": "./assets/icon.svg",
+        "composerIcon": "./assets/icon.svg",
+        "defaultPrompt": [
+          "Help me find a quiet mechanical keyboard under $100.",
+          "Find deals for the shopping interests we discussed.",
+          "Ask me what products I am interested in."
+        ]
+      }
+    }
+  }
 }

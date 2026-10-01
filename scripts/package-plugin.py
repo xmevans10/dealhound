@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+"""Build a clean review ZIP. Fails closed until external launch gates are attested."""
+import argparse,json,zipfile
+from pathlib import Path
+from urllib.parse import urlparse
+p=argparse.ArgumentParser();p.add_argument('--origin',required=True);p.add_argument('--source-reviewed',action='store_true');p.add_argument('--chatgpt-tested',action='store_true');p.add_argument('--recording-url',required=True);p.add_argument('--output',type=Path);args=p.parse_args()
+origin=args.origin.rstrip('/')
+u=urlparse(origin)
+if u.scheme!='https' or not u.hostname or u.username or u.password or u.path or u.query or u.fragment or 'REPLACE' in origin: p.error('Use the deployed HTTPS origin without a path or credentials')
+if not args.source_reviewed or not args.chatgpt_tested:p.error('Source terms and real ChatGPT cases must be verified first')
+if urlparse(args.recording_url).scheme!='https':p.error('Provide an accessible HTTPS walkthrough URL')
+root=Path(__file__).resolve().parents[1];package=root/'chatgpt-plugin';manifest=json.loads((package/'plugin.json').read_text());interface=manifest['extensions']['com.openai']['interface']
+for field,path in [('websiteURL','/'),('supportURL','/support.html'),('privacyPolicyURL','/privacy.html'),('termsOfServiceURL','/terms.html')]:interface[field]=origin+path
+if len(interface['shortDescription'])>30:p.error('Subtitle exceeds submission limit')
+cases=json.loads((root/'docs/REVIEW_CASES.json').read_text())
+# Reviewer cases are exported separately for the portal's supported form.
+manifest['extensions']['com.openai']['review']={'demo_recording_url':args.recording_url,'commerce':False}
+config={'$schema':'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json','mcpServers':{'dealhound':{'type':'streamable-http','url':origin+'/mcp'}}}
+out=args.output or root/'dist';out.mkdir(parents=True,exist_ok=True)
+with zipfile.ZipFile(out/'dealhound-plugin.zip','w',zipfile.ZIP_DEFLATED) as z:
+ z.writestr('plugin.json',json.dumps(manifest,indent=2));z.writestr('mcp.json',json.dumps(config,indent=2))
+ for path in sorted((package/'skills').rglob('*'))+sorted((package/'assets').rglob('*')):
+  if path.is_file():z.write(path,path.relative_to(package))
+(out/'review-cases.json').write_text(json.dumps(cases,indent=2))
+print(f'Built {out}/dealhound-plugin.zip and reviewer cases. Backend code and hosting credentials are excluded.')

@@ -1,0 +1,41 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dealhound",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-30",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
+  "assets": {
+    "directory": "../dist/site",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/mcp",
+      "/.well-known/*",
+      "/health",
+      "/ready"
+    ]
+  },
+  "vars": {
+    "PUBLIC_ORIGIN": "https://REPLACE.workers.dev",
+    "FEED_URL": "https://REPLACE.example/feed.xml",
+    "FEED_NAME": "REPLACE",
+    "FEED_COUNTRY": "US",
+    "FEED_CURRENCY": "USD",
+    "SOURCE_AUTHORIZED": "false"
+  },
+  "observability": {
+    "enabled": false
+  },
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 120,
+        "period": 60
+      }
+    }
+  ]
+}
