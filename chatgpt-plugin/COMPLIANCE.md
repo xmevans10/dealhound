@@ -1,3 +1,5 @@
+> Historical planning document, superseded by README.md for version 0.2.0. Claims below are not a current implementation or test report.
+
 # DealHound ChatGPT Plugin — Fine-Print Compliance Checklist
 
 **Status:** pre-submission. No submission has been made. This file records every

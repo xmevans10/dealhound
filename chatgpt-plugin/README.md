@@ -1,110 +1,61 @@
-# DealHound — ChatGPT Plugin
+# DealHound beta 0.2
 
-**Tell it once. It watches 24/7.**
+Self-contained Python 3 service for saved shopping interests and on-demand
+DealNews RSS searches. SQLite state is separated by authenticated user.
+No third-party runtime dependencies. No affiliate rewriting or purchases.
 
-DealHound for ChatGPT is a dots-native deal watcher: the user gives ChatGPT
-their shopping list once — brands, categories, keywords — and the plugin keeps
-watch over deal communities (Reddit deal subs, Slickdeals, Ben's Bargains,
-Hip2Save) around the clock via scheduled tasks and MCP Events. When a price
-drops on something they actually want, ChatGPT taps them with the deal and a
-direct retailer link.
+## Run and test
 
-This package wraps the proven DealHound engine (`~/workspace/dealhound/`:
-adapters, matcher, affiliate choke point, license tiers) in a dependency-free
-MCP server, without modifying the engine.
+From this directory:
 
-## Layout
-
-```
-chatgpt-plugin/
-├── server.py                 # stdio MCP server (JSON-RPC 2.0, zero dependencies)
-├── plugin.json               # manifest: tools, annotations, commerce + positioning metadata
-├── skills/dealhound/SKILL.md # ChatGPT skill: always-on framing, example prompts
-├── tests/
-│   ├── helpers.py            # stdio client + fixture-adapter harness
-│   ├── test_plugin.py        # 26 tests: manifest, handshake, tool matrix, commerce sweep, engine regression
-│   └── test_reviewer_cases.py# 8 tests: 5 positive + 3 negative reviewer cases as executable QA
-├── landing/index.html        # standalone landing page (editorial "Good taste. Better prices." design)
-├── COMPLIANCE.md             # fine-print compliance checklist (per-rule policy mapping)
-├── LAUNCH_CHECKLIST.md       # what's done vs. remaining user-side blockers
-└── README.md                 # this file
+```sh
+python3 server.py  # local MCP stdio
+python3 -m unittest discover -s tests -v
 ```
 
-## Tools (8)
+Private HTTP beta (behind a TLS reverse proxy):
 
-| Tool | What it does | Annotations |
-|---|---|---|
-| `watchlist_add` | Add a brand / category / keyword (free tier: 5 terms) | write, own-data only |
-| `watchlist_remove` | Remove a term (reversible) | destructive to own list |
-| `watchlist_list` | Show the watchlist + tier usage | read-only |
-| `deal_scan` | Scan deal sources for matches now (24h dedupe, raw URLs) | read-only, open-world |
-| `account_signin` | Honor an existing Pro license key (no purchase flow) | write, own-data only |
-| `account_signout` | Clear local license state | write, own-data only |
-| `account_status` | Tier + usage counts (no commerce language) | read-only |
-| `alert_prefs` | Get/set digest preferences | write, own-data only |
-
-## Commerce safety (read COMPLIANCE.md for the full mapping)
-
-- **Nothing is sold inside the plugin.** Pro ($4.99 one-time) is purchased via
-  external checkout on our own site — the approach the plugin commerce
-  guidelines require. The plugin never shows prices, plans, or checkout links.
-- Free-tier cap returns a neutral message —
-  `"Watchlist is full (5 of 5 terms used). Remove a term to add a new one."`
-  The engine's `upgrade_prompt()` (price + Stripe link) is intercepted and
-  never surfaced. A test asserts this.
-- **Affiliate links are OFF by default.** `plugin_outbound_link()` returns raw
-  retailer URLs unless `DEALHOUND_PLUGIN_AFFILIATE=1`. Disclosure copy ships in
-  the skill, landing page, and footer regardless. Do not enable without a
-  written policy answer from OpenAI (see COMPLIANCE.md §4).
-
-## Quickstart
-
-```bash
-# Run the server (stdio MCP)
-cd ~/workspace/dealhound/chatgpt-plugin
-python3 server.py   # speaks JSON-RPC 2.0 on stdin/stdout
-
-# Run the full test suite (34 tests, ~1 min)
-python3 tests/test_plugin.py        # 26 tests
-python3 tests/test_reviewer_cases.py # 8 reviewer cases (5+/3-)
+```sh
+export DEALHOUND_TOKENS='{"your-long-random-secret":"your-user-id"}'
+export DEALHOUND_DB='/persistent/path/dealhound.sqlite3'
+python3 server.py --http --port 8000
 ```
 
-The server resolves engine state (`watchlist.yaml`, `seen.json`) under
-`$XDG_CONFIG_HOME/dealhound/` (falls back to `~/.config/dealhound/`) — set
-`XDG_CONFIG_HOME` to a temp dir in tests/automation to avoid touching real
-user state.
+The service binds localhost. POST MCP JSON-RPC to `/mcp`, with
+`Authorization: Bearer your-long-random-secret`. GET `/health` is public.
+It uses stateless Streamable HTTP JSON responses; notifications return 202.
+Tokens are server provisioned and must be unique, random and kept out of Git.
+Browser Origins are rejected unless explicitly listed in
+`DEALHOUND_ALLOWED_ORIGINS` (comma separated).
 
-### Test-only hooks (never set in production)
+`mcp.json` configures local stdio. For public deployment replace its server
+entry with `{"type":"streamable-http","url":"https://YOUR_DOMAIN/mcp"}`.
+The relative server path assumes launch from the plugin directory.
 
-| Env var | Purpose |
-|---|---|
-| `DEALHOUND_PLUGIN_TEST_ADAPTER` | `module:Class` fixture adapter (bypasses network) |
-| `DEALHOUND_PLUGIN_TEST_DEALS` | JSON file of deals the fixture adapter returns |
-| `DEALHOUND_PLUGIN_TEST_PUBKEY` | Ed25519 pubkey override for license tests |
-| `DEALHOUND_PLUGIN_AFFILIATE=1` | Enable affiliate URL rewriting (default off) |
+## Current limits and release work
 
-## Test report (2026-09-30)
+- On-demand RSS listings only, with substring matching and source timestamps.
+  Listings may be expired; no verified price history, numeric price filtering,
+  region/currency matching, automatic scans or notifications.
+- Preferences are stored but explicitly reported as not applied.
+- No paid licenses. The old wrapper depended on an engine not in this repository.
+  Previous engine-dependent tests are retained under tests/legacy as reference;
+  their historical pass claims are not current verification.
+- OAuth 2.1, authorization metadata and user consent must replace private beta
+  bearer provisioning for public account linking.
+- Production TLS hosting, rate limits, logs, backups, source caching and source
+  usage permission review remain required. The stdlib HTTP server is for beta,
+  not an internet-facing production server.
+- Background worker and signed MCP Events subscription/delivery lifecycle are
+  required before promising alerts. No sidebar UI exists yet.
+- Public legal/support URLs, publisher/domain verification, schema validation,
+  review scenarios and walkthrough recording remain before directory submission.
+- Older landing and compliance documents retain proposed features; do not publish
+  them as a description of this beta.
 
-- `tests/test_plugin.py`: **26/26 passing** — manifest schema, MCP handshake,
-  full tool matrix (valid / invalid / edge inputs), free-tier gating, Pro
-  sign-in, fixture scans, cold start, MCP-event simulation with end-to-end
-  24h dedupe, commerce-language sweep, engine regression (82/82 existing
-  DealHound tests still green).
-- `tests/test_reviewer_cases.py`: **8/8 passing** — the 5 positive and 3
-  negative reviewer cases from the submission guidelines, run as executable QA.
+## Muse
 
-## What's not in this package (by design)
-
-- **No hosted HTTPS MCP server.** `server.py` is local stdio — the directory
-  requires a public, verified production endpoint. That's a build + hosting
-  step (see LAUNCH_CHECKLIST.md).
-- **No legal URLs live yet.** Privacy / Terms / Support are stubbed as "coming
-  soon" on the landing page; they must exist on our domain before submission.
-- **No submission.** Nothing has been submitted anywhere; submission needs
-  fresh, explicit user approval.
-
-## License tier recap (engine behavior, honored — never sold — here)
-
-- **Free:** 5 watchlist terms, daily digest.
-- **Pro:** $4.99 one-time, unlimited terms, instant alerts. Existing keys
-  verified offline (Ed25519); purchase happens on our site only.
+Reuse the authenticated service and tool implementations. Muse connector
+submission is supported publicly, but its technical onboarding contract has not
+been obtained. There is no certified Muse package here. Confirm transport/auth
+requirements before writing a platform adapter. No directory submission was made.
