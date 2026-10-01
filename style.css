@@ -9,3 +9,7 @@
 /* Native hidden attributes must override component display rules. */
 [hidden]{display:none!important}
 .legal{max-width:760px;margin:60px auto;padding:0 24px;line-height:1.7}.legal h1{font-size:clamp(2.4rem,6vw,4rem);line-height:1.1}.legal h2{font-size:1.5rem;margin-top:2rem}.legal a{color:inherit;text-decoration:underline}.legal ul{padding-left:1.4rem}
+
+.hero-free{max-width:390px;margin:20px 0 24px}.hero-free strong{display:block;font-size:17px;font-weight:700}.hero-free span{display:block;margin-top:6px;font-size:12px;line-height:1.5;color:var(--muted,#65665f)}.hero-copy .hero-free{font-size:12px;line-height:1.5}.official-avatar{background:#fff;border:1px solid #deded5;font-style:normal;overflow:visible}.official-avatar img{width:32px;height:32px;object-fit:contain}.official-avatar .openai-mark{width:58px;height:58px;max-width:none}
+
+.hero-stage{padding-bottom:24px}

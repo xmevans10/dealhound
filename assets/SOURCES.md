@@ -13,3 +13,8 @@ Chrome hound: generated using the built-in ImageGen tool. Prompt: premium photor
 Design references inspected on X:
 - https://x.com/viktoroddy/status/2059294558299766837 — large display type, specimen labels, imagery crossing sections, considered motion.
 - https://x.com/viktoroddy/status/2104754244884779321 — product-focused interaction and material detail.
+
+Agent selector assets verified October 1, 2026:
+- OpenAI Blossom: official OpenAI brand page https://openai.com/brand/; exact black mark path extracted, without geometric changes, from the clear-space illustration at https://images.ctfassets.net/kftzwdyauwt9/3hUGLn3ypllZ0oa01qOYVq/28e8188e6f11b84c3e876569d492734f/Blossom_Light.svg?w=3840&q=90 .
+- Meta provider mark: official Muse page https://ai.meta.com/muse/; https://static.xx.fbcdn.net/rsrc.php/yf/r/-7pQO6hUGK_.svg . This is Meta's mark, identified by the “By Meta” caption, not a claimed Muse-specific logo.
+- Marks are used to identify agent providers, unmodified, subordinate to DealHound branding; no partnership lockup or endorsement is claimed.
