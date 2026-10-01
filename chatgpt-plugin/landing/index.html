@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f2f1eb">
+<meta name="description" content="DealHound for ChatGPT — tell your dot what you like once. It watches deal communities 24/7 and taps you the moment your price drops.">
+<title>DealHound for ChatGPT — Tell it once. Never miss a deal.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f2f1eb;
+    --paper-deep:#e9e7dc;
+    --card:#faf9f4;
+    --ink:#1a1712;
+    --muted:#6e6859;
+    --line:#d9d4c1;
+    --ember:#c25e2a;
+    --green:#0c5b3e;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    --grot:"Space Grotesk","DM Sans",-apple-system,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);color:var(--ink);background:var(--paper);
+       line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--ink);color:var(--paper)}
+  a{color:inherit}
+  .shell{max-width:1180px;margin:0 auto;padding-left:28px;padding-right:28px}
+  .mono{font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:.14em;
+        text-transform:uppercase}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--paper);
+        padding:10px 16px;z-index:200;font-family:var(--mono);font-size:.75rem}
+  .skip:focus{left:12px;top:12px}
+
+  /* ---------- nav ---------- */
+  .header{position:sticky;top:0;z-index:100;background:rgba(242,241,235,.9);
+          backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+          border-bottom:1px solid transparent;transition:border-color .2s}
+  .header.scrolled{border-bottom-color:var(--line)}
+  .nav{display:flex;align-items:center;gap:28px;padding:18px 28px;max-width:1180px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:9px;text-decoration:none;font-family:var(--grot);
+         font-weight:700;font-size:1.35rem;letter-spacing:-.02em}
+  .brand svg{width:32px;height:32px;display:block}
+  .brand-period{color:var(--ember)}
+  .nav-links{display:flex;gap:26px;margin-left:auto}
+  .nav-links a{text-decoration:none;font-size:.92rem;font-weight:500;color:var(--ink)}
+  .nav-links a:hover{color:var(--ember)}
+  .button{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);
+          border:none;border-radius:999px;padding:14px 26px;font-family:var(--sans);
+          font-weight:600;font-size:.95rem;cursor:pointer;text-decoration:none;
+          transition:transform .15s,background .15s}
+  .button:hover{background:#2c2820;transform:translateY(-1px)}
+  .nav-cta{padding:11px 20px;font-size:.88rem;white-space:nowrap}
+
+  /* ---------- hero ---------- */
+  .hero{padding:56px 0 0}
+  .hero-top{display:flex;justify-content:space-between;align-items:center;gap:16px;
+            border-bottom:1px solid var(--line);padding-bottom:18px}
+  .hero-top .status{display:inline-flex;align-items:center;gap:9px}
+  .status-dot{width:9px;height:9px;border-radius:50%;background:var(--ember);
+              display:inline-block;animation:pulse 2.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .hero-index{color:var(--muted)}
+  .hero-stage{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;
+              padding:64px 0 72px}
+  h1{font-family:var(--grot);font-weight:700;font-size:clamp(3rem,7vw,5.2rem);
+     line-height:1.02;letter-spacing:-.03em;margin:0 0 22px}
+  h1 em{font-style:italic;font-weight:500}
+  .hero-copy p.lede{font-size:1.22rem;line-height:1.55;max-width:30rem;color:#33302a;
+                   margin-bottom:30px}
+  .hero-copy p.lede strong{color:var(--ink)}
+  .hero-action{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .hero-micro{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;
+              text-transform:uppercase;color:var(--muted);line-height:1.9}
+
+  /* alert card mock — no images, pure CSS/SVG */
+  .alert-wrap{position:relative}
+  .specimen{border:1px solid var(--line);background:var(--card);border-radius:18px;
+            padding:26px 26px 20px;position:relative;overflow:hidden}
+  .specimen-rings{position:absolute;top:-70px;right:-70px;width:300px;height:300px;opacity:.5}
+  .specimen-top{display:flex;justify-content:space-between;position:relative}
+  .specimen-top .mono{color:var(--muted)}
+  .specimen h3.spec-hound{font-family:var(--grot);font-size:1.5rem;letter-spacing:-.01em;
+             margin:88px 0 6px;position:relative}
+  .specimen p.spec-sub{color:var(--muted);font-size:.95rem;position:relative;margin-bottom:4px}
+  .hero-alert{background:var(--ink);color:var(--paper);border-radius:14px;overflow:hidden;
+              margin-top:-6px;position:relative;z-index:2;
+              box-shadow:0 24px 60px rgba(26,23,18,.28);transform:rotate(-1.2deg)}
+  .alert-top{display:flex;align-items:center;gap:10px;padding:14px 20px;
+             border-bottom:1px solid rgba(242,241,235,.16)}
+  .alert-top .alert-symbol{color:var(--ember);font-weight:700;font-size:1rem}
+  .alert-top .example{margin-left:auto;color:rgba(242,241,235,.45)}
+  .alert-bottom{display:flex;justify-content:space-between;align-items:center;
+                padding:22px 20px;gap:16px}
+  .alert-bottom strong{display:block;font-family:var(--grot);font-size:1.18rem;font-weight:600}
+  .alert-bottom span.sub{display:block;font-size:.92rem;color:rgba(242,241,235,.6);margin-top:4px}
+  .alert-price{text-align:right;flex:none}
+  .alert-price strong{font-family:var(--grot);font-size:2rem;letter-spacing:-.02em;color:var(--paper)}
+  .alert-price del{color:rgba(242,241,235,.45);font-size:1rem;margin-left:8px}
+  .alert-match{display:flex;justify-content:space-between;align-items:center;
+               padding:12px 20px;border-top:1px solid rgba(242,241,235,.16);color:rgba(242,241,235,.75)}
+  .alert-match .off{color:#9fd8b8;font-weight:700}
+  .specimen-foot{margin-top:14px;display:flex;justify-content:space-between}
+  .specimen-foot .mono{color:var(--muted)}
+
+  .hero-bottom{display:flex;justify-content:space-between;align-items:center;gap:16px;
+               border-top:1px solid var(--line);padding:20px 0 26px}
+  .hero-bottom .mono{color:var(--muted)}
+  .scroll-link{text-decoration:none;color:var(--ink);display:inline-flex;gap:8px;align-items:center}
+  .scroll-link:hover{color:var(--ember)}
+
+  /* ---------- source strip ---------- */
+  .source-strip{background:var(--ink);color:var(--paper);padding:22px 0}
+  .source-inner{display:flex;align-items:center;gap:34px;flex-wrap:wrap}
+  .source-label{color:rgba(242,241,235,.55)}
+  .source-inner>span.src{font-family:var(--grot);font-weight:600;font-size:1.12rem;
+                        letter-spacing:-.01em;white-space:nowrap}
+  .source-inner>span.src small{font-family:var(--mono);font-weight:400;font-size:.68rem;
+                              letter-spacing:.1em;text-transform:uppercase;
+                              color:rgba(242,241,235,.5);margin-left:8px}
+  .source-arrow{margin-left:auto;color:var(--ember);font-size:1.4rem}
+
+  /* ---------- sections ---------- */
+  .section{padding:96px 0}
+  .section-meta{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+                border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:52px}
+  .section-meta .mono:first-child{color:var(--ember)}
+  .section-meta .mono:last-child{color:var(--muted);text-align:right}
+  .section-heading{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end;
+                   margin-bottom:56px}
+  .section-heading h2{font-family:var(--grot);font-weight:700;font-size:clamp(2.2rem,4.5vw,3.4rem);
+                     line-height:1.05;letter-spacing:-.025em}
+  .section-heading h2 em{font-style:italic;font-weight:500}
+  .section-heading p{color:#33302a;font-size:1.06rem;max-width:26rem}
+  .section-heading p+p{margin-top:12px}
+
+  /* steps */
+  .steps{border-top:1px solid var(--line)}
+  .step{display:grid;grid-template-columns:120px 1fr 1fr;gap:32px;align-items:start;
+        padding:40px 0;border-bottom:1px solid var(--line)}
+  .step-num{font-family:var(--grot);font-weight:700;font-size:3.4rem;line-height:1;
+            letter-spacing:-.03em;color:var(--paper-deep);
+            -webkit-text-stroke:1.5px var(--ink);text-stroke:1.5px var(--ink)}
+  .step h3{font-family:var(--grot);font-size:1.45rem;font-weight:600;letter-spacing:-.01em;
+           margin-bottom:10px}
+  .step h3 .mono{display:block;color:var(--ember);margin-bottom:10px;font-size:.7rem}
+  .step p{color:#33302a;max-width:30rem}
+  .step-visual{display:flex;gap:10px;flex-wrap:wrap;align-content:start}
+  .chip-pill{border:1px solid var(--line);background:var(--card);border-radius:999px;
+             padding:9px 16px;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;
+             text-transform:uppercase;color:var(--muted)}
+  .chip-pill.hot{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .step-note{margin-top:18px;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;
+             text-transform:uppercase;color:var(--muted)}
+
+  /* pricing */
+  .plans{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:stretch}
+  .plan{border:1px solid var(--line);border-radius:18px;background:var(--card);
+        padding:40px 36px;display:flex;flex-direction:column}
+  .plan.pro{background:var(--ink);color:var(--paper);border-color:var(--ink);
+            transform:rotate(.6deg)}
+  .plan-tag{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}
+  .plan-tag .mono{color:var(--muted)}
+  .plan.pro .plan-tag .mono{color:rgba(242,241,235,.55)}
+  .stamp{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.14em;
+         text-transform:uppercase;border:1.5px solid var(--ember);color:var(--ember);
+         border-radius:6px;padding:6px 10px;transform:rotate(-3deg);display:inline-block}
+  .plan h3{font-family:var(--grot);font-size:2rem;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+  .plan .price-line{font-family:var(--grot);font-size:1.1rem;margin-bottom:22px;color:var(--muted)}
+  .plan.pro .price-line{color:rgba(242,241,235,.65)}
+  .plan ul{list-style:none;margin-bottom:32px;flex:1}
+  .plan li{padding:12px 0;border-bottom:1px solid var(--line);font-size:1rem}
+  .plan.pro li{border-bottom-color:rgba(242,241,235,.16)}
+  .plan li::before{content:"— ";color:var(--ember)}
+  .plan .button{justify-content:center}
+  .plan.pro .button{background:var(--paper);color:var(--ink)}
+  .plan.pro .button:hover{background:#fff}
+  .plan-note{margin-top:14px;font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;
+             text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.9}
+  .plan.pro .plan-note{color:rgba(242,241,235,.5)}
+  .commerce-note{margin-top:40px;border:1px dashed var(--line);border-radius:12px;
+                 padding:20px 24px;display:flex;gap:14px;align-items:flex-start;
+                 background:var(--card)}
+  .commerce-note .mono{color:var(--ember);flex:none;margin-top:4px}
+  .commerce-note p{font-size:.95rem;color:#33302a}
+  .commerce-note strong{color:var(--ink)}
+
+  /* faq */
+  .faq-section{padding:96px 0}
+  .faq-head{margin-bottom:44px}
+  .faq-head .mono{color:var(--muted);display:block;margin-bottom:16px}
+  .faq-head h2{font-family:var(--grot);font-weight:700;font-size:clamp(2.2rem,4.5vw,3.4rem);
+               line-height:1.05;letter-spacing:-.025em}
+  .faq-head h2 em{font-style:italic;font-weight:500}
+  .faq-list{border-top:1px solid var(--line)}
+  .faq-list details{border-bottom:1px solid var(--line);padding:0}
+  .faq-list summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;
+                    align-items:center;gap:20px;padding:24px 4px;
+                    font-family:var(--grot);font-size:1.22rem;font-weight:600;letter-spacing:-.01em}
+  .faq-list summary::-webkit-details-marker{display:none}
+  .faq-list summary .q-mark{font-family:var(--mono);font-size:.8rem;color:var(--ember);
+                            border:1.5px solid var(--ember);border-radius:50%;
+                            width:30px;height:30px;flex:none;display:inline-flex;
+                            align-items:center;justify-content:center;transition:transform .2s}
+  .faq-list details[open] summary .q-mark{transform:rotate(45deg)}
+  .faq-list details p{padding:0 4px 28px;color:#33302a;max-width:44rem}
+  .faq-list details p a{color:var(--ink);font-weight:600}
+
+  /* final */
+  .final-section{background:var(--ink);color:var(--paper);padding:110px 0 96px;margin-top:32px}
+  .final-section .mono{color:rgba(242,241,235,.55);display:block;margin-bottom:26px}
+  .final-heading{display:flex;align-items:center;justify-content:space-between;gap:32px;margin-bottom:34px}
+  .final-heading h2{font-family:var(--grot);font-weight:700;font-size:clamp(2.6rem,6vw,4.6rem);
+                    line-height:1.03;letter-spacing:-.03em}
+  .final-heading h2 em{font-style:italic;font-weight:500}
+  .round-cta{flex:none;width:110px;height:110px;border-radius:50%;border:1.5px solid rgba(242,241,235,.4);
+             display:inline-flex;align-items:center;justify-content:center;
+             font-size:2rem;color:var(--paper);text-decoration:none;transition:all .2s}
+  .round-cta:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+  .final-bottom{display:flex;align-items:center;gap:28px;flex-wrap:wrap;
+                border-top:1px solid rgba(242,241,235,.16);padding-top:30px}
+  .final-bottom p{color:rgba(242,241,235,.7);font-size:1.05rem}
+  .final-bottom .button{background:var(--paper);color:var(--ink)}
+  .final-bottom .button:hover{background:#fff}
+  .final-micro{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+               color:rgba(242,241,235,.45)}
+
+  /* footer */
+  .footer{padding:56px 0 44px}
+  .footer-row{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;
+              margin-bottom:36px}
+  .footer-logo{font-family:var(--grot);font-weight:700;font-size:1.4rem;text-decoration:none;
+               letter-spacing:-.02em}
+  .footer-logo .brand-period{color:var(--ember)}
+  .footer-links{display:flex;gap:24px;flex-wrap:wrap}
+  .footer-links a{text-decoration:none;font-size:.92rem;color:var(--ink);display:inline-flex;
+                  align-items:center;gap:8px}
+  .footer-links a:hover{color:var(--ember)}
+  .soon{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+        color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:3px 7px}
+  .footer-fine{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;
+              border-top:1px solid var(--line);padding-top:28px}
+  .footer-fine p{font-size:.85rem;color:var(--muted);max-width:34rem;line-height:1.7}
+  .footer-fine .mono{color:var(--muted);text-align:right;line-height:2}
+
+  /* responsive */
+  @media (max-width:900px){
+    .hero-stage{grid-template-columns:1fr;gap:40px;padding:44px 0 56px}
+    .section-heading{grid-template-columns:1fr;gap:20px}
+    .step{grid-template-columns:1fr;gap:14px}
+    .step-num{font-size:2.6rem}
+    .plans{grid-template-columns:1fr}
+    .plan.pro{transform:none}
+    .final-heading{flex-direction:column;align-items:flex-start}
+    .nav-links{display:none}
+    .hero-index{font-size:.62rem}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="header" id="site-header">
+  <nav class="nav" aria-label="Main navigation">
+    <a class="brand" href="#" aria-label="DealHound home">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 24 12 11l8 4 8-5 7 10-8 3-5 11-9-2-3-9Z" fill="currentColor"/><path d="m12 11 1 18 6-14M28 10l-6 15" fill="none" stroke="#f2f1eb" stroke-width="2"/><circle cx="29" cy="19" r="1.3" fill="#f2f1eb"/></svg>
+      dealhound<span class="brand-period">*</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#plans">Free vs Pro</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="button nav-cta" href="#get">Get DealHound for ChatGPT <span aria-hidden="true">↗</span></a>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- HERO -->
+  <section class="hero shell" aria-label="Introduction">
+    <div class="hero-top mono">
+      <span class="status"><i class="status-dot" aria-hidden="true"></i> DEALHOUND FOR CHATGPT</span>
+      <span class="hero-index">TELL IT ONCE. IT WATCHES 24/7. / 001</span>
+    </div>
+    <div class="hero-stage">
+      <div class="hero-copy">
+        <h1>Good taste.<br><em>Better prices.</em></h1>
+        <p class="lede">Give ChatGPT your shopping list <strong>once</strong>. Your dot watches deal communities 24/7 and taps you the moment your price drops.</p>
+        <div class="hero-action">
+          <a class="button" href="#get">Get DealHound for ChatGPT <span aria-hidden="true">↗</span></a>
+          <span class="hero-micro">NO REFRESHING.<br>NO FOMO.</span>
+        </div>
+      </div>
+      <div class="alert-wrap" aria-label="Example deal alert">
+        <div class="specimen">
+          <svg class="specimen-rings" viewBox="0 0 300 300" aria-hidden="true">
+            <circle cx="150" cy="150" r="40" fill="none" stroke="#1a1712" stroke-width="1.5" stroke-dasharray="6 6"/>
+            <circle cx="150" cy="150" r="75" fill="none" stroke="#1a1712" stroke-width="1.5" stroke-dasharray="3 7" opacity=".6"/>
+            <circle cx="150" cy="150" r="110" fill="none" stroke="#c25e2a" stroke-width="1.5" stroke-dasharray="10 6" opacity=".7"/>
+            <circle cx="150" cy="150" r="6" fill="#c25e2a"/>
+          </svg>
+          <div class="specimen-top mono"><span>FIELD UNIT / CHATGPT</span><span>FIG. 02</span></div>
+          <h3 class="spec-hound">Your dot is on the scent.</h3>
+          <p class="spec-sub">Scheduled checks. MCP Events. A nudge the moment it matters.</p>
+          <div class="hero-alert">
+            <div class="alert-top mono">
+              <span class="alert-symbol" aria-hidden="true">↘</span> MATCH FOUND
+              <span class="example">EXAMPLE</span>
+            </div>
+            <div class="alert-bottom">
+              <div>
+                <strong>Nike Pegasus 41</strong>
+                <span class="sub">Running shoes</span>
+              </div>
+              <div class="alert-price"><strong>$97</strong><del>$140</del></div>
+            </div>
+            <div class="alert-match mono">
+              <span>MATCHED: NIKE + RUNNING SHOES</span>
+              <span class="off">−31%</span>
+            </div>
+          </div>
+          <div class="specimen-foot mono">
+            <span>ALWAYS ON. EVEN ASLEEP.</span><span>002 ↗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-bottom">
+      <span class="mono">THE DEAL WEB, WATCHED FOR YOU.</span>
+      <a href="#how" class="scroll-link mono">SEE HOW IT WORKS <span aria-hidden="true">↓</span></a>
+    </div>
+  </section>
+
+  <!-- SOURCE STRIP -->
+  <div class="source-strip">
+    <div class="shell source-inner">
+      <span class="mono source-label">OUR HUNTING GROUNDS</span>
+      <span class="src">Reddit <small>deal communities</small></span>
+      <span class="src">Slickdeals</span>
+      <span class="src">Ben’s Bargains</span>
+      <span class="src">Hip2Save</span>
+      <span class="source-arrow" aria-hidden="true">↗</span>
+    </div>
+  </div>
+
+  <!-- 01 / ALWAYS ON -->
+  <section class="section shell" id="how" aria-labelledby="how-title">
+    <div class="section-meta mono"><span>01 / ALWAYS ON</span><span>TELL IT ONCE. IT WATCHES WHILE YOU DON’T.</span></div>
+    <div class="section-heading">
+      <h2 id="how-title">One list.<br>Zero <em>refreshing.</em></h2>
+      <div>
+        <p>Your dot doesn’t sleep, scroll, or get distracted. It keeps your watchlist against the deal web around the clock.</p>
+        <p>No tabs open. No apps to check. It finds you.</p>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num" aria-hidden="true">01</div>
+        <div>
+          <h3><span class="mono">TELL YOUR DOT</span>Tell it what you like.</h3>
+          <p>Brands, categories, keywords — be broad or weirdly specific. Your watchlist lives with your ChatGPT connection and updates whenever you chat.</p>
+        </div>
+        <div class="step-visual">
+          <span class="chip-pill hot">nike</span><span class="chip-pill">running shoes</span>
+          <span class="chip-pill">keyboards</span><span class="chip-pill hot">coffee gear</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" aria-hidden="true">02</div>
+        <div>
+          <h3><span class="mono">IT WATCHES WHILE YOU DON’T</span>Always on, even when you’re not chatting.</h3>
+          <p>Scheduled tasks and MCP Events keep the watchlist live 24/7. DealHound sweeps deal communities on your behalf and checks the retailer’s current price — no refreshing on your end.</p>
+        </div>
+        <div class="step-visual">
+          <span class="chip-pill">scheduled checks</span><span class="chip-pill">mcp events</span>
+          <span class="chip-pill">price verified</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" aria-hidden="true">03</div>
+        <div>
+          <h3><span class="mono">CHATGPT TAPS YOU</span>A nudge, with a direct link.</h3>
+          <p>When a match lands, ChatGPT tells you — in the sidebar panel or right in chat — with the deal, the price, and a direct link to buy.</p>
+        </div>
+        <div class="step-visual">
+          <span class="chip-pill hot">↘ match found</span><span class="chip-pill">direct link</span>
+        </div>
+      </div>
+    </div>
+    <p class="step-note">EXAMPLE WORKFLOW · YOUR TASTE IS THE FILTER</p>
+  </section>
+
+  <!-- 02 / FREE VS PRO -->
+  <section class="section shell" id="plans" aria-labelledby="plans-title">
+    <div class="section-meta mono"><span>02 / FREE VS PRO</span><span>FREE TO START. PRO WHEN YOU’RE HOOKED.</span></div>
+    <div class="section-heading">
+      <h2 id="plans-title">Start free.<br>Go <em>always-on.</em></h2>
+      <div>
+        <p>Free watches a short list and sends you a daily digest. Pro removes the limits and pings you the instant a match lands.</p>
+      </div>
+    </div>
+    <div class="plans">
+      <article class="plan">
+        <div class="plan-tag"><span class="mono">THE STARTER</span></div>
+        <h3>Free</h3>
+        <p class="price-line">$0 — forever</p>
+        <ul>
+          <li>5 watchlist terms</li>
+          <li>Daily digest of matches</li>
+          <li>Deal alerts on your list</li>
+        </ul>
+        <a class="button" href="#get">Start free <span aria-hidden="true">↗</span></a>
+        <p class="plan-note">INSTALL FROM THE CHATGPT<br>APPS DIRECTORY</p>
+      </article>
+      <article class="plan pro">
+        <div class="plan-tag"><span class="mono">THE HOUND</span><span class="stamp">ONE-TIME</span></div>
+        <h3>Pro</h3>
+        <p class="price-line">$4.99 — once, yours forever</p>
+        <ul>
+          <li>Unlimited watchlist terms</li>
+          <li>Instant alerts the moment a match lands</li>
+          <li>Priority checks across deal sources</li>
+        </ul>
+        <a class="button" href="#" data-pro-link>Go Pro — $4.99 <span aria-hidden="true">↗</span></a>
+        <p class="plan-note">PRO IS PURCHASED ON OUR WEBSITE —<br>NEVER INSIDE CHATGPT · (LINK GOES LIVE AT LAUNCH)</p>
+      </article>
+    </div>
+    <div class="commerce-note">
+      <span class="mono">COMMERCE-SAFE</span>
+      <p><strong>Pro is purchased on our website — never inside ChatGPT.</strong> No in-chat payments, no surprise charges. You install the app free in ChatGPT; Pro is a separate one-time purchase on our site, if and when you want it.</p>
+    </div>
+  </section>
+
+  <!-- 03 / FAQ -->
+  <section class="faq-section shell" id="faq" aria-labelledby="faq-title">
+    <div class="faq-head">
+      <span class="mono">A FEW THINGS WORTH KNOWING</span>
+      <h2 id="faq-title">Questions.<br><em>Answered.</em></h2>
+    </div>
+    <div class="faq-list">
+      <details>
+        <summary>How do I install it? <span class="q-mark" aria-hidden="true">+</span></summary>
+        <p>Find DealHound in the ChatGPT apps directory, connect it, and tell it your list — brands, categories, keywords. That’s the whole setup.</p>
+      </details>
+      <details>
+        <summary>Does it watch when I’m not chatting? <span class="q-mark" aria-hidden="true">+</span></summary>
+        <p>Yes. Scheduled tasks and MCP Events keep your watchlist live 24/7, so matches surface even when ChatGPT is closed. That’s the whole point of a dots-native watcher.</p>
+      </details>
+      <details>
+        <summary>Where do the deals come from? <span class="q-mark" aria-hidden="true">+</span></summary>
+        <p>Reddit deal communities, Slickdeals, Ben’s Bargains, and Hip2Save. Before we alert you, the retailer’s current price and stock are checked — so you see what it actually costs now, not what a post said it cost.</p>
+      </details>
+      <details>
+        <summary>Is my watchlist private? <span class="q-mark" aria-hidden="true">+</span></summary>
+        <p>Your watchlist is stored with your ChatGPT connection. We don’t sell your data, and we don’t use your list for anything but finding your deals.</p>
+      </details>
+      <details>
+        <summary>Do links cost me extra? <span class="q-mark" aria-hidden="true">+</span></summary>
+        <p>No. When you buy through a link we share, we may earn a commission at no extra cost to you. The price you pay is the price the retailer shows.</p>
+      </details>
+      <details>
+        <summary>Can a deal sell out before I see it? <span class="q-mark" aria-hidden="true">+</span></summary>
+        <p>Yes. Prices change and deals sell out — hot ones especially. Always check the retailer’s current price and availability before buying.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="final-section" id="get" aria-label="Get DealHound for ChatGPT">
+    <div class="shell">
+      <span class="mono">YOUR TASTE. OUR TERRITORY.</span>
+      <div class="final-heading">
+        <h2>Let the good<br>stuff <em>find you.</em></h2>
+        <a class="round-cta" href="#" aria-label="Get DealHound for ChatGPT"><span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="final-bottom">
+        <a class="button" href="#">Get DealHound for ChatGPT <span aria-hidden="true">↗</span></a>
+        <p>Free to install. Pro is a one-time purchase on our website — never inside ChatGPT.</p>
+        <span class="final-micro">NO REFRESHING. NO FOMO.</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer shell">
+  <div class="footer-row">
+    <a href="#" class="footer-logo">dealhound<span class="brand-period">*</span></a>
+    <div class="footer-links">
+      <a href="#">Privacy <span class="soon">coming soon</span></a>
+      <a href="#">Terms <span class="soon">coming soon</span></a>
+      <a href="#">Support <span class="soon">coming soon</span></a>
+    </div>
+  </div>
+  <div class="footer-fine">
+    <p>Affiliate links may earn us a commission at no extra cost to you.<br>
+       Deals reflect third-party posts. Prices and stock can change.</p>
+    <span class="mono">© 2026 DEALHOUND<br>GOOD TASTE. BETTER PRICES.</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var header = document.getElementById('site-header');
+  function onScroll(){
+    if (window.scrollY > 8) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+</body>
+</html>
