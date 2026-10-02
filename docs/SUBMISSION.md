@@ -18,8 +18,12 @@ Those flags attest completed checks; do not set them to bypass unfinished work. 
 ## Submit and publish
 1. Select the verified publisher and upload dist/dealhound-plugin.zip. Confirm listing/support/privacy/terms URLs and resolve metadata checks.
 2. Connect the remote MCP endpoint using No Authentication. Enter the exact domain challenge into the Worker secret OPENAI_CHALLENGE if requested; verify the /.well-known/openai-apps-challenge response.
-3. Run the portal's tool scan; confirm the read-only deal_scan and purchase_link tools with noauth metadata. Supply the video and exactly five positive and three negative scenarios using the current supported form.
+3. Run the portal's tool scan; confirm the anonymous read-only purchase_link tool (deal_scan appears only when a live source is enabled) with noauth metadata. Supply the video and exactly five positive and three negative scenarios using the current supported form.
 4. Submit for review and address feedback. Approval does not automatically publish the listing; use Publish after approval.
 5. Set launch.json's chatgpt_install_url to the actual published listing URL and redeploy. Exercise the public installation on desktop/mobile.
 
-No purchases, paid tiers, sponsored ranking or affiliate-link changes are enabled. Consult current commerce policy before introducing monetization. Muse remains planned and requires its own verified installation flow.
+No purchases or paid tiers are enabled. Amazon affiliate links are enabled with disclosure; verify affiliate program approval for the domain and agent distribution. Skimlinks remains pending. Muse remains planned and requires its own verified installation flow.
+
+The permanent free origin is https://dealhound.xmevans10.workers.dev. Build an uploadable draft without asserting unfinished gates: `python3 scripts/package-plugin.py --origin https://dealhound.xmevans10.workers.dev --draft`. Final submission still requires real agent tests, an accessible walkthrough and affiliate distribution confirmation.
+
+Muse submission entry: https://muse.ai/platform (Submit a connector opens the sign-in flow). This is distinct from Meta AI Connectors developer preview. Muse registration, authentication compatibility, affiliate policy and end-to-end review still need account access; no public Muse install URL exists for DealHound yet.

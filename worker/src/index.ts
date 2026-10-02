@@ -8,7 +8,7 @@ export default {
  async fetch(request:Request,env:Env,ctx:ExecutionContext):Promise<Response>{
   const url=new URL(request.url);
   if(url.pathname==='/health')return json({status:'ok'});
-  if(url.pathname==='/ready')return json({ready:configured(env)&&enabledSources(env).length>0},configured(env)&&enabledSources(env).length>0?200:503);
+  if(url.pathname==='/ready')return json({ready:configured(env)&&(enabledSources(env).length>0||Boolean(env.AMAZON_ASSOCIATE_TAG&&/^[-a-zA-Z0-9]+-20$/.test(env.AMAZON_ASSOCIATE_TAG)))},configured(env)&&(enabledSources(env).length>0||Boolean(env.AMAZON_ASSOCIATE_TAG&&/^[-a-zA-Z0-9]+-20$/.test(env.AMAZON_ASSOCIATE_TAG)))?200:503);
   if(url.pathname==='/.well-known/openai-apps-challenge')return env.OPENAI_CHALLENGE?new Response(env.OPENAI_CHALLENGE,{headers:{'Content-Type':'text/plain','Cache-Control':'no-store'}}):new Response('Not configured',{status:404});
   if(url.pathname.startsWith('/.well-known/oauth-'))return new Response('Not found',{status:404});
   if(url.pathname!=='/mcp')return env.ASSETS.fetch(request);

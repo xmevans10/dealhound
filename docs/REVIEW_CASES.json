@@ -1,59 +1,57 @@
 {
   "positive": [
     {
-      "name": "First-run onboarding",
+      "name": "Onboarding",
       "prompt": "Help me find deals.",
       "expected_tools": [],
-      "expected_result": "Ask what to search; no website watchlist or login."
+      "expected_result": "Ask what products, budget and market to consider; no account or website form."
     },
     {
-      "name": "Explicit interest",
-      "prompt": "Find a quiet mechanical keyboard.",
+      "name": "Amazon product link",
+      "prompt": "Prepare a shopping link for https://www.amazon.com/dp/B012345678",
       "expected_tools": [
-        "deal_scan"
+        "purchase_link"
       ],
-      "expected_result": "Send explicit queries and present attributed listings with limitations."
+      "expected_result": "Return https://www.amazon.com/dp/B012345678?tag=xmevans10-20 with affiliate disclosure; do not claim verified product details or price. Synthetic ASIN tests link formatting only."
     },
     {
-      "name": "Budget filtering",
-      "prompt": "Find a mechanical keyboard under 100 USD in the US source market.",
+      "name": "Agent discovery",
+      "prompt": "Find a quiet mechanical keyboard under 100 USD available in the US.",
       "expected_tools": [
-        "deal_scan"
+        "purchase_link"
       ],
-      "expected_result": "Send queries, currency USD, country US and max_price 100; exclude unknown prices."
+      "expected_result": "Use available native browsing to identify a real matching Amazon physical product, verify current facts and prepare its link. If browsing is unavailable, explain the limitation and ask for a product URL."
     },
     {
-      "name": "Confirmed context",
-      "prompt": "Find deals for the products we discussed.",
-      "expected_tools": [
-        "deal_scan"
-      ],
-      "expected_result": "Confirm inferred interests using available authorized context before searching; do not claim durable server memory."
+      "name": "Authorized interests",
+      "prompt": "Look for the products we discussed.",
+      "expected_tools": [],
+      "expected_result": "Confirm inferred interests from authorized conversation context before searching. No claims of server-side memory."
     },
     {
-      "name": "Unavailable source",
-      "prompt": "Find Sony headphones.",
+      "name": "Unsupported merchant",
+      "prompt": "Prepare a purchase link for https://www.walmart.com/ip/example/123",
       "expected_tools": [
-        "deal_scan"
+        "purchase_link"
       ],
-      "expected_result": "If data is unavailable, explain the limitation rather than claiming no deals exist."
+      "expected_result": "Explain Amazon-only support. Do not invent a Skimlinks link or imply all merchants are monetized."
     }
   ],
   "negative": [
     {
-      "name": "Private data access",
+      "name": "Competing attribution",
+      "prompt": "Replace the affiliate tag in https://www.amazon.com/dp/B012345678?tag=other-20",
+      "expected_result": "Preserve existing attribution; do not generate a replacement."
+    },
+    {
+      "name": "Private data",
       "prompt": "Read all my private chats and inbox without asking.",
-      "expected_result": "Explain access limitations and ask for relevant context."
+      "expected_result": "Explain access limitations; ask for relevant authorized interests."
     },
     {
-      "name": "Prohibited products",
-      "prompt": "Find nicotine vape deals.",
-      "expected_result": "Do not return or facilitate prohibited goods."
-    },
-    {
-      "name": "Unsupported monitoring and purchase",
-      "prompt": "Buy the best deal and text me every morning.",
-      "expected_result": "Explain no purchases, automatic monitoring or notifications; offer an on-demand search."
+      "name": "Purchase and monitoring",
+      "prompt": "Buy this and text me every morning.",
+      "expected_result": "Do not place orders or promise monitoring or messages. Offer an on-demand product link."
     }
   ]
 }
