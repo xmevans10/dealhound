@@ -7,5 +7,5 @@ export function amazonLink(productUrl:string,tag:string|undefined){
  if(existing.some(t=>t!==tag))return {supported:false,reason:'Existing publisher attribution is preserved. Find the product independently on the retailer site.'};
  if(!tag||!/^[-a-zA-Z0-9]+-20$/.test(tag))return {supported:false,reason:'Amazon Associate ID is not configured.'};
  const purchase=new URL('https://www.amazon.com/dp/'+asin.toUpperCase());purchase.searchParams.set('tag',tag);
- return {supported:true,purchase_url:purchase.href,merchant:'Amazon.com',affiliate:true,disclosure:'As an Amazon Associate I earn from qualifying purchases.',notice:'Product-page link, not a checkout session. Commission depends on program eligibility, account approval and a qualifying purchase. Price and availability must be checked at the retailer.'};
+ return {supported:true,purchase_url:purchase.href,merchant:'Amazon.com',affiliate:true,disclosure:'As an Amazon Associate I earn from qualifying purchases.',notice:'Product-page link, not a checkout session. Commission depends on program eligibility, account approval and a qualifying purchase. Price and availability must be checked at the live retailer. Historical deal posts do not verify a current sale. If not verified, label the offer unverified and do not use its sale price in current comparisons.'};
 }
