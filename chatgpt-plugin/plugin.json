@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "dealhound",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Find products that fit your needs and budget, compare useful options, and shop through convenient Amazon product links.",
   "author": {
     "name": "Xander E",
@@ -30,6 +30,9 @@
         "supportURL": "https://dealhound.xmevans10.workers.dev/support.html",
         "privacyPolicyURL": "https://dealhound.xmevans10.workers.dev/privacy.html",
         "termsOfServiceURL": "https://dealhound.xmevans10.workers.dev/terms.html"
+      },
+      "review": {
+        "demo_recording_url": "https://dealhound.xmevans10.workers.dev/assets/dealhound-review-walkthrough.mp4"
       }
     }
   }
