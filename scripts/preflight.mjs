@@ -8,6 +8,6 @@ for(const path of ['/','/privacy.html','/terms.html','/support.html','/health','
 try{
  const res=await fetch(origin+'/mcp',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/list'}),signal:AbortSignal.timeout(15000)});
  const doc=await res.json();const tools=doc.result?.tools;
- if(!res.ok||tools?.length!==1||tools[0].name!=='deal_scan'||tools[0].securitySchemes?.[0]?.type!=='noauth'||res.headers.has('WWW-Authenticate')){console.error('Anonymous MCP tool check failed');failures++;}else console.log('Anonymous MCP OK');
+ if(!res.ok||tools?.length!==2||!tools.some(t=>t.name==='deal_scan')||!tools.some(t=>t.name==='purchase_link')||tools[0].securitySchemes?.[0]?.type!=='noauth'||res.headers.has('WWW-Authenticate')){console.error('Anonymous MCP tool check failed');failures++;}else console.log('Anonymous MCP OK');
 }catch{console.error('MCP unreachable or invalid');failures++;}
 if(failures)process.exit(1);

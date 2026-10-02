@@ -18,12 +18,15 @@
     ]
   },
   "vars": {
-    "PUBLIC_ORIGIN": "https://REPLACE.workers.dev",
+    "PUBLIC_ORIGIN": "https://dealhound.xmevans10.workers.dev",
     "FEED_URL": "https://REPLACE.example/feed.xml",
     "FEED_NAME": "REPLACE",
     "FEED_COUNTRY": "US",
     "FEED_CURRENCY": "USD",
-    "SOURCE_AUTHORIZED": "false"
+    "SOURCE_AUTHORIZED": "false",
+    "BESTBUY_ENABLED": "false",
+    "EBAY_ENABLED": "false",
+    "AMAZON_ASSOCIATE_TAG": "xmevans10-20"
   },
   "observability": {
     "enabled": false
@@ -37,5 +40,6 @@
         "period": 60
       }
     }
-  ]
+  ],
+  "account_id": "f2a9eae3dfc27027e5f30e37b4c2e2d6"
 }

@@ -10,7 +10,7 @@ export const prefsSchema = z.object({
   max_age_days:z.number().int().min(1).max(30).optional(),
 });
 export type Preferences = z.infer<typeof prefsSchema>;
-export interface Deal {title:string;url:string;source:string;country:string;currency:string|null;price:number|null;discount_pct:number|null;published:string|null}
+export interface Deal {title:string;url:string;source:string;country:string;currency:string|null;price:number|null;discount_pct:number|null;published:string|null;checked_at?:string;price_updated?:string|null;image_url?:string|null;reference_price?:number|null;discount_basis?:string|null;source_payload?:Record<string,unknown>}
 export interface Source {name:string;country:string;currency:string}
 const blocked = /\b(ammunition|firearms?|rifles?|pistols?|shotguns?|vapes?|nicotine|tobacco|cigarettes?|cannabis|marijuana|THC|CBD|bongs?|sex toys?|porn|pepper spray|stun guns?|prescription|gift cards?|subscriptions?|memberships?|software|VPN|e-?books?|online courses?|digital downloads?|crypto|casino|lottery)\b/i;
 export function isAllowed(title:string):boolean { return !blocked.test(title); }
@@ -46,7 +46,9 @@ export function matches(deals:Deal[],terms:string[],prefs:Preferences,now=Date.n
     if(prefs.currency && d.currency!==prefs.currency) return false;
     if(prefs.max_price!=null && (d.price==null || d.price>prefs.max_price || !prefs.currency || d.currency!==prefs.currency)) return false;
     if(prefs.min_discount_pct!=null && (d.discount_pct==null || d.discount_pct<prefs.min_discount_pct)) return false;
-    const stamp=d.published?Date.parse(d.published):NaN;
+    // Live API observation is not a publication date. Explicit listing-age
+    // filters require a real listing date; RSS always requires one.
+    const stamp=d.published?Date.parse(d.published):prefs.max_age_days===undefined&&d.checked_at?Date.parse(d.checked_at):NaN;
     if(!Number.isFinite(stamp) || stamp>now+5*60000 || now-stamp>(prefs.max_age_days??7)*86400000) return false;
     return true;
   });

@@ -1,5 +1,6 @@
 import {WebStandardStreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 import {createServer,type ServiceEnv} from './mcp';
+import {enabledSources} from './sources';
 interface Env extends ServiceEnv {ASSETS:Fetcher;RATE_LIMITER:RateLimit;OPENAI_CHALLENGE?:string}
 const json=(body:unknown,status=200,headers:Record<string,string>={})=>Response.json(body,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});
 const configured=(env:ServiceEnv)=>{try{const u=new URL(env.PUBLIC_ORIGIN);return u.protocol==='https:'&&u.origin===env.PUBLIC_ORIGIN&&!env.PUBLIC_ORIGIN.includes('REPLACE');}catch{return false;}};
@@ -7,7 +8,7 @@ export default {
  async fetch(request:Request,env:Env,ctx:ExecutionContext):Promise<Response>{
   const url=new URL(request.url);
   if(url.pathname==='/health')return json({status:'ok'});
-  if(url.pathname==='/ready')return json({ready:configured(env)&&env.SOURCE_AUTHORIZED==='true'},configured(env)&&env.SOURCE_AUTHORIZED==='true'?200:503);
+  if(url.pathname==='/ready')return json({ready:configured(env)&&enabledSources(env).length>0},configured(env)&&enabledSources(env).length>0?200:503);
   if(url.pathname==='/.well-known/openai-apps-challenge')return env.OPENAI_CHALLENGE?new Response(env.OPENAI_CHALLENGE,{headers:{'Content-Type':'text/plain','Cache-Control':'no-store'}}):new Response('Not configured',{status:404});
   if(url.pathname.startsWith('/.well-known/oauth-'))return new Response('Not found',{status:404});
   if(url.pathname!=='/mcp')return env.ASSETS.fetch(request);

@@ -1,4 +1,9 @@
 {
-  "$schema":"https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
-  "mcpServers":{"dealhound":{"type":"streamable-http","url":"https://REPLACE.workers.dev/mcp"}}
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "dealhound": {
+      "type": "streamable-http",
+      "url": "https://dealhound.xmevans10.workers.dev/mcp"
+    }
+  }
 }
