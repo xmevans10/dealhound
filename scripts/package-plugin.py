@@ -16,6 +16,8 @@ if interface.get('category','Other') not in ['Productivity','Creativity','Develo
 cases=json.loads((root/'docs/REVIEW_CASES.json').read_text())
 # Reviewer cases are exported separately for the portal's supported form.
 manifest['extensions']['com.openai']['review']={'commerce':True,'commerce_description':'Physical product affiliate links; external retailer checkout. No in-agent orders or payments.'}
+manifest['extensions']['com.openai']['review']['test_cases']={kind:[{'description':case['name'],'prompt':case['prompt'],'tools_triggered':', '.join(case.get('expected_tools',[])) or 'None','expected_behavior':case['expected_result']} for case in cases[kind]] for kind in ['positive','negative']}
+manifest['extensions']['com.openai']['review']['release_notes']='Updated affiliate discovery instructions, chrome hound icon, benefit-focused listing, and supported directory category.'
 if args.recording_url: manifest['extensions']['com.openai']['review']['demo_recording_url']=args.recording_url
 config={'$schema':'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json','mcpServers':{'dealhound':{'type':'streamable-http','url':origin+'/mcp'}}}
 out=args.output or root/'dist';out.mkdir(parents=True,exist_ok=True)
