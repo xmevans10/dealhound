@@ -12,6 +12,7 @@ if not args.draft and (not args.recording_url or urlparse(args.recording_url).sc
 root=Path(__file__).resolve().parents[1];package=root/'chatgpt-plugin';manifest=json.loads((package/'plugin.json').read_text());interface=manifest['extensions']['com.openai']['interface']
 for field,path in [('websiteURL','/'),('supportURL','/support.html'),('privacyPolicyURL','/privacy.html'),('termsOfServiceURL','/terms.html')]:interface[field]=origin+path
 if len(interface['shortDescription'])>30:p.error('Subtitle exceeds submission limit')
+if interface.get('category','Other') not in ['Productivity','Creativity','Developer Tools','Business & Operations','Data & Analytics','Communication','Education & Research','Security','Finance','Healthcare','Travel','Entertainment','Other']:p.error('Unsupported directory category')
 cases=json.loads((root/'docs/REVIEW_CASES.json').read_text())
 # Reviewer cases are exported separately for the portal's supported form.
 manifest['extensions']['com.openai']['review']={'commerce':True,'commerce_description':'Physical product affiliate links; external retailer checkout. No in-agent orders or payments.'}
