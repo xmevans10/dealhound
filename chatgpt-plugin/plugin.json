@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "dealhound",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Discover physical products with your agent and prepare disclosed Amazon purchase links. Free, no account or checkout automation.",
   "author": {
     "name": "Xander E",
@@ -19,8 +19,8 @@
         "capabilities": [
           "Read"
         ],
-        "logo": "./assets/icon.svg",
-        "composerIcon": "./assets/icon.svg",
+        "logo": "./assets/icon.png",
+        "composerIcon": "./assets/icon.png",
         "defaultPrompt": [
           "Help me find a quiet mechanical keyboard under $100.",
           "Find deals for the shopping interests we discussed.",
