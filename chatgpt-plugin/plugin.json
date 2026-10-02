@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "dealhound",
-  "version": "1.1.2",
-  "description": "Discover physical products with your agent and prepare disclosed Amazon purchase links. Free, no account or checkout automation.",
+  "version": "1.1.3",
+  "description": "Find products that fit your needs and budget, spend less time hunting for deals, and shop through convenient Amazon links. Free to use.",
   "author": {
     "name": "Xander E",
     "url": "https://github.com/xmevans10/dealhound"
@@ -12,8 +12,8 @@
     "com.openai": {
       "interface": {
         "displayName": "DealHound",
-        "shortDescription": "Shop with your agent",
-        "longDescription": "Tell your agent what you want or confirm shopping interests from context you authorize. Your agent uses its available browsing tools to discover physical products. DealHound prepares Amazon.com product links with affiliate attribution and a clear disclosure. No DealHound account or subscription. We may earn commissions at no extra cost to you. Prices and availability must be checked with the retailer. DealHound does not buy products or run background monitoring. Skimlinks and additional merchant support are pending.",
+        "shortDescription": "Find deals. Shop smarter.",
+        "longDescription": "Make your next purchase a smarter one. Tell your agent what you need, your budget and where you shop. DealHound helps your agent look for relevant physical products and potential savings, then gives you convenient Amazon.com product links so you can check the options and decide what to buy. Less searching, more useful finds\u2014from everyday essentials to your next upgrade. Free to use, with no DealHound account or subscription. Your agent uses its available browsing tools; Amazon.com is currently the supported affiliate merchant. Prices, discounts, size availability and shipping must be checked with the retailer. We may earn commissions on qualifying purchases at no extra cost to you, and affiliate links are disclosed. Savings are not guaranteed. Searches happen when you ask; DealHound does not buy products or monitor prices in the background.",
         "developerName": "Xander E",
         "category": "Shopping",
         "capabilities": [
@@ -22,9 +22,9 @@
         "logo": "./assets/icon.png",
         "composerIcon": "./assets/icon.png",
         "defaultPrompt": [
-          "Help me find a quiet mechanical keyboard under $100.",
-          "Find deals for the shopping interests we discussed.",
-          "Ask me what products I am interested in."
+          "Help me find good-value ASICS trail shoes in men\u2019s US 9.5 on Amazon.com.",
+          "Find a quiet mechanical keyboard under $100 for delivery in the US.",
+          "Help me save on my next purchase. Ask what I need and my budget."
         ],
         "websiteURL": "https://dealhound.xmevans10.workers.dev/",
         "supportURL": "https://dealhound.xmevans10.workers.dev/support.html",
