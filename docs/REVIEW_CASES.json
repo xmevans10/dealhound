@@ -2,9 +2,9 @@
   "positive": [
     {
       "name": "Onboarding",
-      "prompt": "Help me find deals.",
+      "prompt": "find me deals on some stuff I'm interested in",
       "expected_tools": [],
-      "expected_result": "Ask what products, budget and market to consider; no account or website form."
+      "expected_result": "Activate the shopping workflow without a DealHound mention. Ask what to focus on, or confirm interests from authorized conversation context, then ask for missing country and budget. No login, watchlist form or premature purchase_link call."
     },
     {
       "name": "Amazon product link",
@@ -20,7 +20,7 @@
       "expected_tools": [
         "purchase_link"
       ],
-      "expected_result": "Use available native browsing to identify a real matching Amazon physical product, verify current facts and prepare its link. If browsing is unavailable, explain the limitation and ask for a product URL."
+      "expected_result": "Activate the shopping workflow without a DealHound mention. Use native browsing to compare suitable real products against budget and quietness. Verify current retailer facts; label unverifiable prices and exclude historical sale prices from current comparisons. Prepare links for independently discovered suitable Amazon products. If browsing is unavailable, explain the limitation and ask for a product URL."
     },
     {
       "name": "Authorized interests",
