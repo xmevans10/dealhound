@@ -19,7 +19,7 @@ document.querySelectorAll('[data-step]').forEach(button=>button.addEventListener
 document.querySelector('#step-visual').innerHTML=steps[0];
 const names={chatgpt:'ChatGPT',muse:'Muse',other:'your agent'};
 let selected='chatgpt';
-let launch={chatgpt_install_url:null,muse_install_url:null};
+let launch={chatgpt_install_url:document.querySelector('#install-agent').href,muse_install_url:null};
 const starter=`Help me find deals on products I’m interested in. If DealHound is connected, use its tools; otherwise explain that it needs to be installed first. Ask what I’m looking for, or suggest a few interests using only context I’ve shared for this shopping task. Let me confirm suggestions before searching. Ask my country, currency and budget when needed. Search on demand, provide source links, and explain any source limitations. Don’t purchase anything or promise background monitoring.`;
 document.querySelector('#full-brief').textContent=starter;
 function render(){
