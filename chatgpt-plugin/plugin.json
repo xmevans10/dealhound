@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "dealhound",
-  "version": "1.1.10",
-  "description": "Find deals, check sale prices, and compare physical products with retailer research from your agent.",
+  "version": "1.1.11",
+  "description": "Find physical products and deals on Amazon.com with disclosed DealHound affiliate links.",
   "author": {
     "name": "Xander E",
     "url": "https://github.com/xmevans10/dealhound"
@@ -12,8 +12,8 @@
     "com.openai": {
       "interface": {
         "displayName": "DealHound",
-        "shortDescription": "Find deals and compare picks",
-        "longDescription": "Find a solid deal on running socks, compare quiet keyboards, or check whether a product is still on sale. DealHound guides your agent’s retailer research, compares physical products against your needs, and checks whether prices and offers are current. Tell it what you need and share any budget, fit, and buying-country constraints. DealHound can prepare disclosed Amazon.com product links for suitable finds. Other retailers may appear as alternatives. Qualifying purchases through affiliate links may earn us a commission at no extra cost to you. Searches happen on request.",
+        "shortDescription": "Find deals on Amazon.com",
+        "longDescription": "Find a deal on running socks, compare quiet keyboards, or check whether a product is still on sale on Amazon.com. DealHound guides your agent’s research and returns Amazon.com affiliate links for suitable physical products. Check current prices, stock, and offer conditions at the retailer. Qualifying purchases through these links may earn us a commission at no extra cost to you. You complete checkout on Amazon.com.",
         "developerName": "Xander E",
         "category": "Other",
         "capabilities": [
@@ -35,7 +35,7 @@
         "demo_recording_url": "https://dealhound.xmevans10.workers.dev/assets/dealhound-user-walkthrough.mp4"
       },
       "publication": {
-        "release_notes": "Added everyday deal-finding examples and streamlined retailer research when no strict budget or size is required."
+        "release_notes": "Search Amazon.com first and require a DealHound affiliate link for each shopping recommendation."
       }
     }
   }
