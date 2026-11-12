@@ -20,7 +20,7 @@ document.querySelector('#step-visual').innerHTML=steps[0];
 const names={chatgpt:'ChatGPT',muse:'Muse',other:'your agent'};
 let selected='chatgpt';
 let launch={chatgpt_install_url:document.querySelector('#install-agent').href,muse_install_url:null};
-const starter=`Help me find deals on products I’m interested in. If DealHound is connected, use its tools; otherwise explain that it needs to be installed first. Ask what I’m looking for, or suggest a few interests using only context I’ve shared for this shopping task. Let me confirm suggestions before searching. Ask my country, currency and budget when needed. Search on demand, provide source links, and explain any source limitations. Don’t purchase anything or promise background monitoring.`;
+const starter=`Use DealHound to find a suitable physical product on Amazon.com. Ask what I’m shopping for and only ask for constraints you need. For each recommendation, use DealHound’s returned Amazon product link and show its affiliate disclosure. If live price or stock is unavailable, say so and leave unverified prices out.`;
 document.querySelector('#full-brief').textContent=starter;
 function render(){
   document.querySelector('#agent-name').textContent=names[selected].toUpperCase();
@@ -28,9 +28,9 @@ function render(){
   let url=null;try{const parsed=new URL(raw);if(parsed.protocol==='https:'&&(selected==='chatgpt'?parsed.hostname==='chatgpt.com':parsed.hostname==='muse.ai'))url=parsed.href;}catch{}
   const install=document.querySelector('#install-agent');install.hidden=!url;
   document.querySelector('#copy-starter').hidden=Boolean(url);
-  if(url){install.href=url;install.textContent=`Add DealHound to ${names[selected]} ↗`;}
-  document.querySelector('#agent-summary').textContent=url?`Add DealHound to ${names[selected]}, and let your agent ask what to look for.`:selected==='other'?'MCP-capable agents can connect to the hosted service once deployment is complete. See connection help for setup.':`The ${names[selected]} connector is ${selected==='muse'?'planned':'preparing for release'}. The starter prompt previews the conversation; it does not install DealHound.`;
-  document.querySelector('#handoff-status').textContent=url?'Your agent handles the conversation from here.':'Public installation is not available yet.';
+  if(url){install.href=url;install.textContent=selected==='chatgpt'?'Open DealHound in ChatGPT ↗':`Add DealHound to ${names[selected]} ↗`;}
+  document.querySelector('#agent-summary').textContent=url?(selected==='chatgpt'?'Open the DealHound listing, then choose Try in chat to start with DealHound attached.':`Add DealHound to ${names[selected]}, and let your agent ask what to look for.`):selected==='other'?'MCP-capable agents can connect to the hosted service once deployment is complete. See connection help for setup.':`The ${names[selected]} connector is ${selected==='muse'?'planned':'preparing for release'}. The starter prompt previews the conversation; it does not install DealHound.`;
+  document.querySelector('#handoff-status').textContent=url?(selected==='chatgpt'?'Tell DealHound what you want to find on Amazon.com.':'Your agent handles the conversation from here.'):'Public installation is not available yet.';
 }
 document.querySelectorAll('[data-agent]').forEach(button=>button.addEventListener('click',()=>{
   selected=button.dataset.agent;
