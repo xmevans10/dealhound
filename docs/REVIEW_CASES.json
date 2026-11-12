@@ -16,11 +16,11 @@
     },
     {
       "name": "Agent discovery",
-      "prompt": "find me a solid deal on good running socks",
+      "prompt": "find me a good deal on black friday gifts for my girlfriend",
       "expected_tools": [
         "purchase_link"
       ],
-      "expected_result": "Search Amazon.com first. For every recommended item call purchase_link with its direct Amazon.com product page. Show the returned affiliate link and disclosure. If no suitable Amazon product or link is available, explain the limitation without offering other merchant links. Label any price or stock that cannot be verified."
+      "expected_result": "Search Amazon.com first. For every recommended item call purchase_link with its direct Amazon.com product page. Show the returned affiliate link and disclosure. If no suitable Amazon product or link is available, explain the limitation without offering other merchant links. Offer choices across price ranges. Resolve search pages and roundups to direct product pages. Omit unverified prices and label unverified availability."
     },
     {
       "name": "Authorized interests",
