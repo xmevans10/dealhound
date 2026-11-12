@@ -10,7 +10,7 @@ export const prefsSchema = z.object({
   max_age_days:z.number().int().min(1).max(30).optional(),
 });
 export type Preferences = z.infer<typeof prefsSchema>;
-export interface Deal {title:string;url:string;source:string;country:string;currency:string|null;price:number|null;discount_pct:number|null;published:string|null;checked_at?:string;price_updated?:string|null;image_url?:string|null;reference_price?:number|null;discount_basis?:string|null;source_payload?:Record<string,unknown>}
+export interface Deal {title:string;url:string;source:string;country:string;currency:string|null;price:number|null;discount_pct:number|null;published:string|null;checked_at?:string;price_updated?:string|null;image_url?:string|null;reference_price?:number|null;discount_basis?:string|null;source_payload?:Record<string,unknown>;disclosure?:string}
 export interface Source {name:string;country:string;currency:string}
 const blocked = /\b(ammunition|firearms?|rifles?|pistols?|shotguns?|vapes?|nicotine|tobacco|cigarettes?|cannabis|marijuana|THC|CBD|bongs?|sex toys?|porn|pepper spray|stun guns?|prescription|gift cards?|subscriptions?|memberships?|software|VPN|e-?books?|online courses?|digital downloads?|crypto|casino|lottery)\b/i;
 export function isAllowed(title:string):boolean { return !blocked.test(title); }
@@ -38,10 +38,10 @@ export function parseFeed(xml:string,source:Source):Deal[] {
   }
   return result;
 }
-export function matches(deals:Deal[],terms:string[],prefs:Preferences,now=Date.now()):Deal[] {
+export function matches(deals:Deal[],terms:string[],prefs:Preferences,now=Date.now(),providerMatched:ReadonlySet<Deal>=new Set()):Deal[] {
   const queries=terms.map(t=>t.toLocaleLowerCase().split(/\s+/).filter(Boolean));
   return deals.filter(d=>{
-    if(!queries.some(words=>words.every(w=>d.title.toLocaleLowerCase().includes(w)))) return false;
+    if(!providerMatched.has(d)&&!queries.some(words=>words.every(w=>d.title.toLocaleLowerCase().includes(w)))) return false;
     if(prefs.country && d.country!==prefs.country) return false;
     if(prefs.currency && d.currency!==prefs.currency) return false;
     if(prefs.max_price!=null && (d.price==null || d.price>prefs.max_price || !prefs.currency || d.currency!==prefs.currency)) return false;

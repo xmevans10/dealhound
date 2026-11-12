@@ -34,3 +34,13 @@ The agent may discover products using its own authorized browsing tools, then ca
 - Reddit commercial Data API use requires express written approval/separate agreement. https://redditinc.com/policies/data-api-terms
 
 These four are not enabled or advertised as integrated feeds. Native agent browsing does not give our server a license to ingest or reaffiliate their content. The generic RSS adapter can ingest an approved feed once source-specific permission and its feed endpoint are configured. Reddit requires a dedicated approved API integration.
+
+
+## Amazon.com Creators API
+
+The existing `deal_scan` automatically includes Amazon.com on US/USD searches when the Amazon adapter is enabled. It respects explicit source lists and skips Amazon for listing-age filters because SearchItems provides no listing publication date. Amazon's relevance ranking supplies product matches, and DealHound still enforces price, currency and discount filters. The result uses the exact Amazon API product URL and affiliate disclosure. Amazon prices are source-reported and can vary by shopper. Missing and restricted offers leave the product link available without a price.
+
+Production starts with the adapter disabled. To activate, confirm the Amazon account has Creators API access for this distribution surface. Set `AMAZON_CREATORS_CLIENT_ID` and `AMAZON_CREATORS_CLIENT_SECRET` as Worker secrets using the North America 3.1 credentials. Set `AMAZON_CREATORS_ENABLED` to `true` only when ready for a live integration test. Confirm the deployed `AMAZON_ASSOCIATE_TAG` belongs to the same account. Exercise `deal_scan` with no explicit source list and confirm results include the expected StoreID, original API URL parameters, and disclosure. Catalog requests are spaced within one scan. Amazon's account-wide quota can still throttle concurrent scans. Verify available capacity before broad rollout.
+
+- [Creators API onboarding](https://affiliate-program.amazon.com/creatorsapi/docs/en-us/onboarding/register-for-creators-api)
+- [Amazon request limits and attribution requirements](https://affiliate-program.amazon.com/creatorsapi/docs/en-us/concepts/api-rates)

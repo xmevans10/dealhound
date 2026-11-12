@@ -17,8 +17,8 @@ export function createServer(env:ServiceEnv,cache?:Cache){
   if(filters.max_price!=null&&!filters.currency)return result({matches:[],needs_currency:true,message:'Specify the currency for your maximum price.'});
   if(queries.some(q=>!isAllowed(q)))return result({matches:[],unsupported:true,message:'Only ordinary physical product discovery is supported.'});
   const {deals,statuses}=await searchSources(env,queries,filters,sources,cache);
-  const available=statuses.some(s=>s.status==='ok');
-  const data={matches:matches(deals,queries,filters).slice(0,limit),sources:statuses,filters,checked_at:new Date().toISOString(),source_unavailable:!available,partial:available&&statuses.some(s=>s.status==='unavailable'),message:available?'Source-reported listings; an absent discount is not proof of savings.':'No selected live source is available. Source credentials or provider access may be missing.',notice:'Verify retailer price, shipping and availability. Reference prices and discounts are provider-reported, not verified price history. No automatic monitoring.'};
+  const available=statuses.some(s=>s.status==='ok'||s.status==='partial');
+  const data={matches:matches(deals,queries,filters,Date.now(),new Set(deals.filter(d=>d.source==='Amazon.com'&&d.disclosure))).slice(0,limit),sources:statuses,filters,checked_at:new Date().toISOString(),source_unavailable:!available,partial:available&&statuses.some(s=>s.status==='unavailable'||s.status==='partial'),message:available?'Source-reported listings; an absent discount is not proof of savings.':'No selected live source is available. Source credentials or provider access may be missing.',notice:'Verify retailer price, shipping and availability. Reference prices and discounts are provider-reported, not verified price history. No automatic monitoring.'};
   return {...result(data),...(!available&&statuses.some(s=>s.status==='unavailable')?{isError:true}:{})};
  });
  // SDK forwards _meta but does not preserve this host-specific top-level field.

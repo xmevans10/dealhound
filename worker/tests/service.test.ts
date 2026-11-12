@@ -20,10 +20,10 @@ describe('source and effective preferences',()=>{
 });
 
 describe('account-free independent MCP SDK client',()=>{
- async function client(source='true'){
+ async function client(source='true',overrides:Partial<import('../src/mcp').ServiceEnv>={}){
   const c=new Client({name:'launch-test',version:'1'});
   await c.connect(new StreamableHTTPClientTransport(new URL(config.PUBLIC_ORIGIN+'/mcp'),{fetch:async(input,init)=>{
-   const server=createServer({...config,SOURCE_AUTHORIZED:source});
+   const server=createServer({...config,SOURCE_AUTHORIZED:source,...overrides});
    const transport=new WebStandardStreamableHTTPServerTransport({sessionIdGenerator:undefined,enableJsonResponse:true});
    await server.connect(transport);const response=await transport.handleRequest(new Request(input,init));await server.close();return response;
   }}));return c;
@@ -31,6 +31,27 @@ describe('account-free independent MCP SDK client',()=>{
  it('supplies discovery instructions and canonical disclosed product links to an independent host',async()=>{const c=await client('false');try{expect(c.getInstructions()).toContain('start by searching Amazon.com');expect(c.getInstructions()).toContain('Every recommended product must include the exact purchase_url');expect(c.getInstructions()).toContain('show the linked item as a product option with price and stock unverified');expect(c.getInstructions()).toContain('confirm any inferred interests');const published=(await c.listTools()).tools[0];expect(published.title).toBe('Prepare Amazon product link');expect(published.annotations).toMatchObject({readOnlyHint:true,destructiveHint:false,openWorldHint:true,idempotentHint:true});const linked=await c.callTool({name:'purchase_link',arguments:{product_url:'https://www.amazon.com/dp/B012345678'}});expect(linked.structuredContent).toMatchObject({purchase_url:'https://www.amazon.com/dp/B012345678?tag=xmevans10-20',disclosure:'As an Amazon Associate I earn from qualifying purchases.'});expect((await c.callTool({name:'purchase_link',arguments:{product_url:'https://www.amazon.com/dp/B012345678?tag=other-20'}})).structuredContent).toMatchObject({supported:false});}finally{await c.close();}});
  it('publishes only anonymous read-only search and no profile/write tools',async()=>{const c=await client();try{const tools=await c.listTools();expect(tools.tools.map(t=>t.name)).toEqual(['deal_scan','purchase_link']);expect(tools.tools[0]._meta?.securitySchemes).toEqual([{type:'noauth'}]);expect(tools.tools[0].annotations?.readOnlyHint).toBe(true);}finally{await c.close();}});
  it('searches without credentials and has no remembered interests or budget',async()=>{vi.stubGlobal('fetch',vi.fn(async()=>new Response(xml)));const c=await client();try{const filtered=await c.callTool({name:'deal_scan',arguments:{queries:['Nike'],currency:'USD',max_price:100}});expect(JSON.stringify(filtered)).toContain('shoes?ref=original');expect(JSON.stringify(filtered)).not.toContain('store.example/euro');expect(JSON.stringify(filtered)).not.toContain('store.example/unknown');const unfiltered=await c.callTool({name:'deal_scan',arguments:{queries:['Nike']}});expect(JSON.stringify(unfiltered)).toContain('store.example/euro');expect((await c.callTool({name:'deal_scan',arguments:{}})).isError).toBe(true);}finally{await c.close();}});
+ it('returns a ranked Amazon discovery result with intact affiliate attribution through MCP',async()=>{
+  const url='https://www.amazon.com/dp/B0015VHIF8?tag=xmevans10-20&linkCode=osi';
+  vi.stubGlobal('fetch',vi.fn(async(address:string)=>Response.json(address.includes('/auth/')
+   ?{access_token:'test-token'}
+   :{searchResult:{items:[{
+    asin:'B0015VHIF8',detailPageURL:url,itemInfo:{title:{displayValue:'Balega Hidden Comfort Socks'}},
+    offersV2:null,
+   }]},errors:[{code:'PartialResponse'}]})));
+  const c=await client('false',{
+   AMAZON_CREATORS_ENABLED:'true',AMAZON_CREATORS_CLIENT_ID:'test-id',
+   AMAZON_CREATORS_CLIENT_SECRET:'test-secret',
+  });
+  try{
+   expect((await c.listTools()).tools.map(t=>t.name)).toEqual(['deal_scan','purchase_link']);
+   const result=await c.callTool({name:'deal_scan',arguments:{queries:['cushioned running socks']}});
+   expect(result.structuredContent).toMatchObject({
+    matches:[{url,price:null,disclosure:'As an Amazon Associate I earn from qualifying purchases.'}],
+    partial:true,source_unavailable:false,
+   });
+  }finally{await c.close();}
+ });
  it('rejects invalid/unknown arguments and missing budget currency',async()=>{const c=await client();try{for(const args of [{queries:[]},{queries:['Nike'],limit:-1},{queries:['Nike'],user_id:'someone'},{queries:['Nike'],query:'old'}])expect((await c.callTool({name:'deal_scan',arguments:args})).isError).toBe(true);expect(JSON.stringify(await c.callTool({name:'deal_scan',arguments:{queries:['Nike'],max_price:100}}))).toContain('needs_currency');}finally{await c.close();}});
  it('hides inactive search and reports enabled provider failures',async()=>{const c=await client('false');try{expect((await c.listTools()).tools.map(t=>t.name)).toEqual(['purchase_link']);expect((await c.callTool({name:'deal_scan',arguments:{queries:['Nike']}})).isError).toBe(true);}finally{await c.close();}vi.stubGlobal('fetch',vi.fn(async()=>new Response('bad',{status:500})));const live=await client();try{expect(JSON.stringify(await live.callTool({name:'deal_scan',arguments:{queries:['nicotine']}}))).toContain('unsupported');const result=await live.callTool({name:'deal_scan',arguments:{queries:['Nike']}});expect(result.isError).toBe(true);expect(JSON.stringify(result)).toContain('source_unavailable');}finally{await live.close();}});
 });
