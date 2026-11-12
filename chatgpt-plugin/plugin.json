@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "dealhound",
-  "version": "1.1.9",
-  "description": "Help choose physical products within your budget, compare options and check retailer offers using your agent’s browsing tools.",
+  "version": "1.1.10",
+  "description": "Find deals, check sale prices, and compare physical products with retailer research from your agent.",
   "author": {
     "name": "Xander E",
     "url": "https://github.com/xmevans10/dealhound"
@@ -12,8 +12,8 @@
     "com.openai": {
       "interface": {
         "displayName": "DealHound",
-        "shortDescription": "Find products for your budget",
-        "longDescription": "Choose your next purchase with less searching. Tell DealHound what you need, your budget and buying country. Your agent researches physical products with its available browsing tools, compares options against your needs and checks retailer offers before describing a price as current. Not sure what to look for? Ask for ideas based on interests you have shared, then confirm what you want to explore. DealHound prepares convenient Amazon.com product links for suitable finds. Amazon.com is currently the supported affiliate merchant; other retailers may appear as clearly labeled alternatives. Current prices, stock, shipping and offer conditions must be checked at the retailer. Unverified offers are labeled; savings are not guaranteed. Qualifying purchases through affiliate links may earn us a commission at no extra cost to you. Searches happen when you ask. DealHound does not place orders, save a shopping profile or monitor prices in the background.",
+        "shortDescription": "Find deals and compare picks",
+        "longDescription": "Find a solid deal on running socks, compare quiet keyboards, or check whether a product is still on sale. DealHound guides your agent’s retailer research, compares physical products against your needs, and checks whether prices and offers are current. Tell it what you need and share any budget, fit, and buying-country constraints. DealHound can prepare disclosed Amazon.com product links for suitable finds. Other retailers may appear as alternatives. Qualifying purchases through affiliate links may earn us a commission at no extra cost to you. Searches happen on request.",
         "developerName": "Xander E",
         "category": "Other",
         "capabilities": [
@@ -22,7 +22,7 @@
         "logo": "./assets/icon.png",
         "composerIcon": "./assets/icon.png",
         "defaultPrompt": [
-          "Find me deals on some stuff I’m interested in. Ask what to focus on and my budget.",
+          "Find me a solid deal on good running socks for shopping in the US.",
           "Help me choose a compact MIDI controller under $100 for shopping in the US.",
           "Compare quiet mechanical keyboards under $100 for shopping in the US."
         ],
@@ -35,7 +35,7 @@
         "demo_recording_url": "https://dealhound.xmevans10.workers.dev/assets/dealhound-user-walkthrough.mp4"
       },
       "publication": {
-        "release_notes": "Clarified shopping-intent discovery, added budget-focused starter prompts and explicit skill activation boundaries. Affiliate linking and live-offer verification requirements remain unchanged."
+        "release_notes": "Added everyday deal-finding examples and streamlined retailer research when no strict budget or size is required."
       }
     }
   }
